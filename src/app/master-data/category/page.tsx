@@ -226,9 +226,9 @@ export default function Page() {
                               >
                                 <TableCell className="text-center font-mono">{cat.category_id}</TableCell>
                                 <TableCell className="font-medium">{cat.name}</TableCell>
-                                <TableCell className="text-center">{cat.routine}%</TableCell>
-                                <TableCell className="text-center">{cat.non_routine}%</TableCell>
-                                <TableCell className="text-center">{cat.project}%</TableCell>
+                                <TableCell className="text-center">{cat.routine*100}%</TableCell>
+                                <TableCell className="text-center">{cat.non_routine*100}%</TableCell>
+                                <TableCell className="text-center">{cat.project*100}%</TableCell>
                               </TableRow>
                             ))
                           ) : (

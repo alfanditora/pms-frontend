@@ -42,11 +42,11 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { User, Settings, Shield, Building } from "lucide-react"
+import { User, Settings, Shield, Building, Loader2 } from "lucide-react"
 
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 
-type User = {
+type UserType = {
   npk: string
   name: string
   section: string
@@ -56,13 +56,19 @@ type User = {
   privillege: "ADMIN" | "USER" | "OPERATION"
 }
 
+type Department = {
+  department_id: number
+  name: string
+}
+
 export default function Page() {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<UserType | null>(null)
   const [departments, setDepartments] = useState<{ department_id: number, name: string }[]>([])
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
+  const [fetchError, setFetchError] = useState<string | null>(null)
   const router = useRouter()
 
   const getToken = () => {
@@ -71,6 +77,7 @@ export default function Page() {
     return tokenCookie ? tokenCookie.split('=')[1] : null
   }
 
+  // Fetch departments
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
@@ -84,34 +91,37 @@ export default function Page() {
         })
 
         if (!res.ok) {
-          throw new Error(`Failed to fetch department: ${res.status}`);
+          throw new Error(`Failed to fetch departments: ${res.status}`);
         }
-
+        
         const data = await res.json();
-        setDepartments(data);
+        const sortedData = data.sort((a: Department, b: Department) => a.department_id - b.department_id)
+        setDepartments(sortedData);
       } catch (err) {
-        console.error("Error fetch department:", err);
-        toast.error("Failed to get list department");
+        console.error("Error fetching departments:", err);
+        toast.error("Failed to fetch departments");
       }
     }
 
     fetchDepartments()
   }, [])
 
+  // Fetch user profile
   useEffect(() => {
     const fetchUserProfile = async () => {
       setFetchLoading(true);
+      setFetchError(null);
       try {
         const token = getToken();
         if (!token) {
-          toast.error("Sesi autentikasi telah berakhir. Silakan login kembali.");
+          toast.error("Your session has expired. Please log in again.");
           router.push("/login");
           return;
         }
 
         const storedUser = localStorage.getItem("user");
         if (!storedUser) {
-          toast.error("Data pengguna tidak ditemukan. Silakan login kembali.");
+          toast.error("User data not found. Please log in again.");
           document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
           router.push("/login");
           return;
@@ -119,7 +129,7 @@ export default function Page() {
 
         const parsedUser = JSON.parse(storedUser);
         if (!parsedUser?.npk) {
-          toast.error("Data pengguna tidak valid. Silakan login kembali.");
+          toast.error("Invalid user data. Please log in again.");
           router.push("/login");
           return;
         }
@@ -134,12 +144,12 @@ export default function Page() {
 
         if (!res.ok) {
           if (res.status === 401 || res.status === 403) {
-            toast.error("Sesi Anda telah berakhir. Silakan login kembali.");
+            toast.error("Your session has expired. Please log in again.");
             document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
             localStorage.removeItem('user');
             router.push("/login");
           } else {
-            throw new Error(`Gagal mengambil profil: ${res.statusText}`);
+            throw new Error(`Failed to fetch profile: ${res.statusText}`);
           }
           return;
         }
@@ -149,8 +159,8 @@ export default function Page() {
         localStorage.setItem('user', JSON.stringify(data));
 
       } catch (error) {
-        console.error("Gagal mengambil profil pengguna:", error);
-        toast.error("Terjadi kesalahan saat mengambil profil Anda.");
+        console.error("Failed to fetch user profile:", error);
+        setFetchError("Failed to load user profile");
       } finally {
         setFetchLoading(false);
       }
@@ -166,7 +176,7 @@ export default function Page() {
     try {
       const token = getToken()
       if (!token) {
-        toast.error("Token tidak ditemukan. Silakan login kembali.")
+        toast.error("Token not found. Please log in again.")
         router.push("/login")
         return
       }
@@ -191,7 +201,7 @@ export default function Page() {
 
       if (!res.ok) {
         if (res.status === 401) {
-          toast.error("Sesi berakhir. Silakan login kembali.")
+          toast.error("Session expired. Please log in again.")
           document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
           localStorage.removeItem('user')
           router.push("/login")
@@ -199,16 +209,16 @@ export default function Page() {
         }
 
         const errorData = await res.json().catch(() => ({}))
-        throw new Error(errorData.message || "Gagal memperbarui profil")
+        throw new Error(errorData.message || "Failed to update profile")
       }
 
       const updatedUser = await res.json()
       localStorage.setItem('user', JSON.stringify(updatedUser))
       setUser(updatedUser)
-      toast.success("Profil berhasil diperbarui")
+      toast.success("Profile updated successfully")
     } catch (error: any) {
-      console.error("Gagal memperbarui profil:", error)
-      toast.error(error.message || "Gagal memperbarui profil")
+      console.error("Failed to update profile:", error)
+      toast.error(error.message || "Failed to update profile")
     } finally {
       setLoading(false)
     }
@@ -218,17 +228,17 @@ export default function Page() {
     if (!user) return
 
     if (!password || !confirmPassword) {
-      toast.error("Password tidak boleh kosong")
+      toast.error("Password cannot be empty")
       return
     }
 
     if (password !== confirmPassword) {
-      toast.error("Password tidak cocok")
+      toast.error("Passwords do not match")
       return
     }
 
     if (password.length < 6) {
-      toast.error("Password minimal harus 6 karakter")
+      toast.error("Password must be at least 6 characters")
       return
     }
 
@@ -237,7 +247,7 @@ export default function Page() {
     try {
       const token = getToken()
       if (!token) {
-        toast.error("Token tidak ditemukan. Silakan login kembali.")
+        toast.error("Token not found. Please log in again.")
         router.push("/login")
         return
       }
@@ -254,7 +264,7 @@ export default function Page() {
 
       if (!res.ok) {
         if (res.status === 401) {
-          toast.error("Sesi berakhir. Silakan login kembali.")
+          toast.error("Session expired. Please log in again.")
           document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
           localStorage.removeItem('user')
           router.push("/login")
@@ -262,15 +272,15 @@ export default function Page() {
         }
 
         const errorData = await res.json().catch(() => ({}))
-        throw new Error(errorData.message || "Gagal mengubah password")
+        throw new Error(errorData.message || "Failed to change password")
       }
 
-      toast.success("Password berhasil diubah")
+      toast.success("Password changed successfully")
       setPassword("")
       setConfirmPassword("")
     } catch (error: any) {
-      console.error("Gagal mengubah password:", error)
-      toast.error(error.message || "Gagal mengubah password")
+      console.error("Failed to change password:", error)
+      toast.error(error.message || "Failed to change password")
     } finally {
       setLoading(false)
     }
@@ -280,7 +290,7 @@ export default function Page() {
     document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
     localStorage.removeItem('user')
     router.push('/login')
-    toast.success("Berhasil keluar")
+    toast.success("Successfully logged out")
   }
 
   const getPrivilegeColor = (privilege: string) => {
@@ -294,35 +304,6 @@ export default function Page() {
       default:
         return "bg-gray-100 text-gray-800 hover:bg-gray-200"
     }
-  }
-
-  const getDepartmentName = (departmentId: number) => {
-    const dept = departments.find(d => d.department_id === departmentId)
-    return dept ? dept.name : "Unknown Department"
-  }
-
-  if (fetchLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-2"></div>
-          <p>Memuat profil...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p>Data pengguna tidak ditemukan</p>
-          <Button onClick={() => router.push("/login")} className="mt-2">
-            Kembali ke Login
-          </Button>
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -345,7 +326,7 @@ export default function Page() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Management User</BreadcrumbPage>
+                  <BreadcrumbPage>User Management</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -357,19 +338,29 @@ export default function Page() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-            <div className="p-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center space-x-2">
-                    <User className="h-5 w-5" />
-                    <CardTitle>Profile Management</CardTitle>
+          <div className="bg-white min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center space-x-2">
+                  <CardTitle className="text-2xl">User Profile</CardTitle>
+                </div>
+                <CardDescription>
+                  Manage your profile information and account credentials
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {fetchLoading ? (
+                  <div className="flex items-center justify-center py-16">
+                    <div className="text-center">
+                      <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+                      <p className="text-muted-foreground">Loading profile...</p>
+                    </div>
                   </div>
-                  <CardDescription>
-                    Kelola informasi profil dan kredensial akun Anda
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+                ) : fetchError ? (
+                  <div className="flex items-center justify-center py-16">
+                    <p className="text-muted-foreground">{fetchError}</p>
+                  </div>
+                ) : user ? (
                   <Tabs defaultValue="profile" className="w-full">
                     <TabsList className="grid w-full grid-cols-2">
                       <TabsTrigger value="profile" className="flex items-center gap-2">
@@ -378,20 +369,20 @@ export default function Page() {
                       </TabsTrigger>
                       <TabsTrigger value="credentials" className="flex items-center gap-2">
                         <Shield className="h-4 w-4" />
-                        Credentials & Password
+                        Credentials
                       </TabsTrigger>
                     </TabsList>
-                    
+
                     <TabsContent value="profile" className="space-y-4 mt-6">
                       <div className="grid gap-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="npk">NPK</Label>
-                            <Input 
+                            <Input
                               id="npk"
-                              value={user.npk} 
-                              disabled 
-                              className="bg-muted font-mono" 
+                              value={user.npk}
+                              disabled
+                              className="bg-muted font-mono"
                             />
                           </div>
                           <div className="space-y-2">
@@ -459,8 +450,8 @@ export default function Page() {
                               </SelectTrigger>
                               <SelectContent>
                                 {departments.map((dept) => (
-                                  <SelectItem 
-                                    key={dept.department_id} 
+                                  <SelectItem
+                                    key={dept.department_id}
                                     value={dept.department_id.toString()}
                                   >
                                     {dept.name}
@@ -472,12 +463,12 @@ export default function Page() {
                         </div>
 
                         <div className="pt-4">
-                          <Button 
-                            onClick={handleSaveProfile} 
+                          <Button
+                            onClick={handleSaveProfile}
                             disabled={loading}
                             className="w-full md:w-auto"
                           >
-                            {loading ? "Menyimpan..." : "Simpan Profil"}
+                            {loading ? "Saving..." : "Save Changes"}
                           </Button>
                         </div>
                       </div>
@@ -491,7 +482,7 @@ export default function Page() {
                             <h4 className="font-medium">Change Password</h4>
                           </div>
                           <p className="text-sm text-amber-700 mt-1">
-                            Pastikan password Anda kuat dan tidak mudah ditebak. Minimal 6 karakter.
+                            Make sure your password is strong and unique. At least 6 characters.
                           </p>
                         </div>
 
@@ -519,21 +510,25 @@ export default function Page() {
                           </div>
 
                           <div className="pt-4">
-                            <Button 
-                              onClick={handleChangePassword} 
+                            <Button
+                              onClick={handleChangePassword}
                               disabled={loading || !password || !confirmPassword}
                               className="w-full md:w-auto"
                             >
-                              {loading ? "Mengubah..." : "Ubah Password"}
+                              {loading ? "Saving..." : "Change Password"}
                             </Button>
                           </div>
                         </div>
                       </div>
                     </TabsContent>
                   </Tabs>
-                </CardContent>
-              </Card>
-            </div>
+                ) : (
+                  <div className="flex items-center justify-center py-16">
+                    <p className="text-muted-foreground">User data not found</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </SidebarInset>
