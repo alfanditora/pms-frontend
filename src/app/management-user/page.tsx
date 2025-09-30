@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
+import { LogoutButton } from "@/components/navbar/logout"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -61,7 +62,7 @@ type Department = {
   name: string
 }
 
-export default function Page() {
+export default function userPage() {
   const [user, setUser] = useState<UserType | null>(null)
   const [departments, setDepartments] = useState<{ department_id: number, name: string }[]>([])
   const [password, setPassword] = useState("")
@@ -286,13 +287,6 @@ export default function Page() {
     }
   }
 
-  const handleLogout = () => {
-    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-    localStorage.removeItem('user')
-    router.push('/login')
-    toast.success("Successfully logged out")
-  }
-
   const getPrivilegeColor = (privilege: string) => {
     switch (privilege) {
       case "ADMIN":
@@ -332,9 +326,7 @@ export default function Page() {
             </Breadcrumb>
           </div>
           <div className="ml-auto px-4">
-            <Button variant="outline" onClick={handleLogout}>
-              Logout
-            </Button>
+            <LogoutButton />
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">

@@ -1,5 +1,6 @@
 "use client"
 
+import { LogoutButton } from "@/components/navbar/logout"
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -48,13 +49,6 @@ export default function Page() {
   const [filteredDepartments, setFilteredDepartments] = useState<Department[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
-
-  const handleLogout = () => {
-    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
-    localStorage.removeItem("user")
-    router.push("/login")
-    toast.success("Successfully logged out")
-  }
 
   // Get token helper
   const getToken = () => {
@@ -136,9 +130,7 @@ export default function Page() {
             </Breadcrumb>
           </div>
           <div className="ml-auto px-4">
-            <Button variant="outline" onClick={handleLogout}>
-              Logout
-            </Button>
+            <LogoutButton />
           </div>
         </header>
         

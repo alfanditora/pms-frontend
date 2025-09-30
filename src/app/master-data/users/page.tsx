@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import UserPage from "@/components/ipp-monitoring/userSide"
-import ManagementSide from "@/components/ipp-monitoring/managementSide"
+import { redirect } from "next/navigation"
+import AdminPage from "@/components/data-user/adminSide"
 import { Loader2 } from "lucide-react"
 
 type UserInfo = {
@@ -30,9 +30,9 @@ export default function UsersPage() {
         )
     }
 
-    if (privilege === 'USER') {
-        return <UserPage />
+    if (privilege === 'ADMIN') {
+        return <AdminPage />
     } else {
-        return <ManagementSide />
+        return redirect('#')
     }
 }

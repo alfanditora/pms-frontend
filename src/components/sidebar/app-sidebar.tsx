@@ -10,6 +10,7 @@ import {
     Frame,
     Map,
     PieChart,
+    FileCheck,
 } from "lucide-react"
 
 import { NavActiveIpp } from "./nav-ipp"
@@ -22,7 +23,7 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar"
 
-const data = {
+const userData = {
     navMain: [
         {
             title: "Dashboard",
@@ -78,26 +79,117 @@ const data = {
             ],
         },
     ],
-    activeIpps: [
+}
+
+const managementData = {
+    navMain: [
         {
-            name: "Design Engineering",
-            url: "#",
-            icon: Frame,
+            title: "Dashboard",
+            url: "/dashboard",
+            icon: LayoutDashboard,
+            items: [],
         },
         {
-            name: "Sales & Marketing",
-            url: "#",
-            icon: PieChart,
+            title: "Management User",
+            url: "/management-user",
+            icon: Users,
+            items: [],
         },
         {
-            name: "Travel",
+            title: "Master Data",
             url: "#",
-            icon: Map,
+            icon: Database,
+            items: [
+                {
+                    title: "Category",
+                    url: "/master-data/category",
+                },
+                {
+                    title: "Department",
+                    url: "/master-data/department",
+                },
+                {
+                    title: "Users",
+                    url: "/master-data/users",
+                },
+            ],
+        },
+        {
+            title: "IPP",
+            url: "#",
+            icon: FolderKanban,
+            items: [
+                {
+                    title: "IPP Monitoring",
+                    url: "/ipp/monitoring",
+                },
+                {
+                    title: "IPP Submission",
+                    url: "/ipp/submission",
+                },
+                {
+                    title: "IPP Entry",
+                    url: "/ipp/entry",
+                },
+                {
+                    title: "IPP Database",
+                    url: "/ipp/database",
+                },
+            ],
+        },
+        {
+            title: "Achievement",
+            url: "#",
+            icon: Trophy,
+            items: [
+                {
+                    title: "Achievement Entry",
+                    url: "/achievement/entry",
+                },
+            ],
         },
     ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function parseJwt(token: string) {
+    try {
+        return JSON.parse(atob(token.split(".")[1]))
+    } catch {
+        return null
+    }
+}
+
+export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
+    const [currentUser, setCurrentUser] = React.useState<any>(null)
+    const getToken = () => {
+        const cookies = document.cookie.split(';')
+        const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('token='))
+        return tokenCookie ? tokenCookie.split('=')[1] : null
+    }
+
+    React.useEffect(() => {
+        const token = getToken()
+        if (!token) return
+
+        const decoded = parseJwt(token)
+        if (decoded?.npk) {
+            fetch(`http://localhost:4000/api/user/${decoded.npk}/profile`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    setCurrentUser(data?.data ? data.data : data)
+                })
+                .catch((err) => console.error("Failed to fetch user profile:", err))
+        }
+    }, [])
+
+    const menuData =
+        currentUser?.privillege === "ADMIN" ||
+            currentUser?.privillege === "OPERATION"
+            ? managementData
+            : userData
+
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
@@ -115,8 +207,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </SidebarMenuButton>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={data.navMain} />
-                <NavActiveIpp activeIpps={data.activeIpps} />
+                <NavMain items={menuData.navMain} />
             </SidebarContent>
             <SidebarRail />
         </Sidebar>
