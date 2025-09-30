@@ -67,7 +67,7 @@ export default function Page() {
       setLoading(true)
       const token = getToken()
 
-      const res = await fetch("http://localhost:4000/api/category/all", {
+      const res = await fetch("https://pms-database.vercel.app/api/category/all", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

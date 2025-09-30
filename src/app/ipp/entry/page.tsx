@@ -83,7 +83,7 @@ export default function Page() {
     const npK = JSON.parse(storedUser).npk
 
     try {
-      const res = await fetch(`http://localhost:4000/api/ipp/user/${npK}`, {
+      const res = await fetch(`https://pms-database.vercel.app/api/ipp/user/${npK}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) throw new Error("Failed to fetch IPPs")
@@ -124,7 +124,7 @@ export default function Page() {
     if (!ippToDelete) return
     try {
       const token = getToken()
-      const res = await fetch(`http://localhost:4000/api/ipp/${ippToDelete.ipp}/delete`, {
+      const res = await fetch(`https://pms-database.vercel.app/api/ipp/${ippToDelete.ipp}/delete`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -154,7 +154,7 @@ export default function Page() {
     const toastId = toast.loading(`Submitting IPP "${selectedIpp.ipp}"...`)
     try {
       const token = getToken()
-      const res = await fetch(`http://localhost:4000/api/ipp/${selectedIpp.ipp}/submit`, {
+      const res = await fetch(`https://pms-database.vercel.app/api/ipp/${selectedIpp.ipp}/submit`, {
         method: "PATCH", // Using PATCH as per REST conventions for updates
         headers: { Authorization: `Bearer ${token}` },
       })

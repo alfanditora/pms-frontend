@@ -94,8 +94,8 @@ export default function AdminPage() {
     const token = getToken()
     try {
       const [usersRes, deptsRes] = await Promise.all([
-        fetch("http://localhost:4000/api/user/all", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("http://localhost:4000/api/department/all", { headers: { Authorization: `Bearer ${token}` } })
+        fetch("https://pms-database.vercel.app/api/user/all", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch("https://pms-database.vercel.app/api/department/all", { headers: { Authorization: `Bearer ${token}` } })
       ])
 
       if (!usersRes.ok) throw new Error("Failed to fetch users")
@@ -167,7 +167,7 @@ export default function AdminPage() {
     }
 
     const token = getToken()
-    const url = isEditing ? `http://localhost:4000/api/user/${currentUser?.npk}/update` : "http://localhost:4000/api/user/create"
+    const url = isEditing ? `https://pms-database.vercel.app/api/user/${currentUser?.npk}/update` : "https://pms-database.vercel.app/api/user/create"
     const method = isEditing ? "PUT" : "POST"
 
     try {
@@ -194,7 +194,7 @@ export default function AdminPage() {
     if (!userToDelete) return
     try {
       const token = getToken()
-      const res = await fetch(`http://localhost:4000/api/user/${userToDelete.npk}/delete`, {
+      const res = await fetch(`https://pms-database.vercel.app/api/user/${userToDelete.npk}/delete`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       })

@@ -44,7 +44,7 @@ export default function ExecutiveSummaryPage() {
         return;
       }
 
-      const res = await fetch(`http://localhost:4000/api/ipp/${ippId}/summary`, {
+      const res = await fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/summary`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

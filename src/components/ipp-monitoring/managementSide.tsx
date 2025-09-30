@@ -85,7 +85,7 @@ export default function ManagementSide() {
         setLoading(true)
         try {
             const token = getToken()
-            const res = await fetch(`http://localhost:4000/api/ipp/approved/all`, {
+            const res = await fetch(`https://pms-database.vercel.app/api/ipp/approved/all`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
 

@@ -187,7 +187,7 @@ export default function ActivityDetailPage() {
 
             const decoded = parseJwt(token)
             if (decoded?.npk) {
-                const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/user/${decoded.npk}/profile`, {
+                const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/user/${decoded.npk}/profile`, {
                     headers: { Authorization: `Bearer ${token}` },
                 })
 
@@ -204,7 +204,7 @@ export default function ActivityDetailPage() {
                 }
             }
 
-            const activitiesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/ipp/${ippId}/activities`, {
+            const activitiesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app/'}/api/ipp/${ippId}/activities`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
 
@@ -227,7 +227,7 @@ export default function ActivityDetailPage() {
 
             setActivity(foundActivity)
 
-            const achievementsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/ipp/${ippId}/activities/${activityId}/achievements`, {
+            const achievementsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/ipp/${ippId}/activities/${activityId}/achievements`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
 
@@ -240,7 +240,7 @@ export default function ActivityDetailPage() {
                 const evidencePromises = achievementsArray.map(async (achievement) => {
                     try {
                         const evidenceRes = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/ipp/${ippId}/activities/${activityId}/achievements/${achievement.month}/evidences`,
+                            `${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/ipp/${ippId}/activities/${activityId}/achievements/${achievement.month}/evidences`,
                             { headers: { Authorization: `Bearer ${token}` } }
                         )
                         if (evidenceRes.ok) {
@@ -295,7 +295,7 @@ export default function ActivityDetailPage() {
         setActionLoading("update")
         try {
             const value = parseFloat(achievementValue) || 0
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/ipp/${ippId}/activities/${activityId}/achievements/${selectedMonth}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/ipp/${ippId}/activities/${activityId}/achievements/${selectedMonth}`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -333,7 +333,7 @@ export default function ActivityDetailPage() {
             const formData = new FormData()
             formData.append('file', file)
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/ipp/${ippId}/activities/${activityId}/achievements/${selectedMonth}/evidences`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/ipp/${ippId}/activities/${activityId}/achievements/${selectedMonth}/evidences`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
                 body: formData,
@@ -364,7 +364,7 @@ export default function ActivityDetailPage() {
 
         setActionLoading(`delete-${evidenceId}`)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/ipp/evidences/${evidenceId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/ipp/evidences/${evidenceId}`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${token}` },
             })
@@ -390,7 +390,7 @@ export default function ActivityDetailPage() {
 
         setActionLoading(`verify-${month}`)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/ipp/${ippId}/activities/${activityId}/achievements/${month}/verification`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/ipp/${ippId}/activities/${activityId}/achievements/${month}/verification`, {
                 method: 'PATCH',
                 headers: {
                     Authorization: `Bearer ${token}`,

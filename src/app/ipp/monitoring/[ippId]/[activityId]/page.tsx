@@ -170,7 +170,7 @@ export default function ActivityDetailPage() {
 
             if (!userNpk) return
 
-            const response = await fetch(`http://localhost:4000/api/user/${userNpk}/profile`, {
+            const response = await fetch(`https://pms-database.vercel.app/api/user/${userNpk}/profile`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -199,7 +199,7 @@ export default function ActivityDetailPage() {
 
         setLoading(true)
         try {
-            const activitiesRes = await fetch(`http://localhost:4000/api/ipp/${ippId}/activities`, {
+            const activitiesRes = await fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/activities`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
 
@@ -213,7 +213,7 @@ export default function ActivityDetailPage() {
 
             setActivity(foundActivity)
 
-            const achievementsRes = await fetch(`http://localhost:4000/api/ipp/${ippId}/activities/${activityId}/achievements`, {
+            const achievementsRes = await fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/activities/${activityId}/achievements`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
 
@@ -240,7 +240,7 @@ export default function ActivityDetailPage() {
                 const evidencePromises = transformedAchievements.map(async (achievement) => {
                     try {
                         const evidenceRes = await fetch(
-                            `http://localhost:4000/api/ipp/${ippId}/activities/${activityId}/achievements/${achievement.month}/evidences`,
+                            `https://pms-database.vercel.app/api/ipp/${ippId}/activities/${activityId}/achievements/${achievement.month}/evidences`,
                             { headers: { Authorization: `Bearer ${token}` } }
                         )
                         if (evidenceRes.ok) {

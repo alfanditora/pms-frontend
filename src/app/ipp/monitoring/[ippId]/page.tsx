@@ -176,16 +176,16 @@ export default function Page() {
             }
 
             const [ippRes, actsRes, meRes, monthlyRes] = await Promise.all([
-                fetch(`http://localhost:4000/api/ipp/${ippId}`, {
+                fetch(`https://pms-database.vercel.app/api/ipp/${ippId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch(`http://localhost:4000/api/ipp/${ippId}/activities`, {
+                fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/activities`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch(`http://localhost:4000/api/user/${decoded.npk}/profile`, {
+                fetch(`https://pms-database.vercel.app/api/user/${decoded.npk}/profile`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch(`http://localhost:4000/api/ipp/${ippId}/monthly-approvals`, {
+                fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/monthly-approvals`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
             ])
@@ -220,7 +220,7 @@ export default function Page() {
 
             if (!userInfo && ippData.npk) {
                 const userRes = await fetch(
-                    `http://localhost:4000/api/user/${ippData.npk}/profile`,
+                    `https://pms-database.vercel.app/api/user/${ippData.npk}/profile`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
                 if (userRes.ok) {
@@ -231,7 +231,7 @@ export default function Page() {
 
             if (!categoryInfo && ippData.categoryId) {
                 const categoryRes = await fetch(
-                    `http://localhost:4000/api/category/find/${ippData.categoryId}`,
+                    `https://pms-database.vercel.app/api/category/find/${ippData.categoryId}`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
                 if (categoryRes.ok) {
@@ -246,7 +246,7 @@ export default function Page() {
                 (!userInfo.department || !userInfo.department.name)
             ) {
                 const deptRes = await fetch(
-                    `http://localhost:4000/api/department/find/${userInfo.departmentId}`,
+                    `https://pms-database.vercel.app/api/department/find/${userInfo.departmentId}`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
                 if (deptRes.ok) {
@@ -333,7 +333,7 @@ export default function Page() {
         }
 
         try {
-            const res = await fetch(`http://localhost:4000/api/ipp/${ippId}/${action}`, {
+            const res = await fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/${action}`, {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status }),
@@ -384,7 +384,7 @@ export default function Page() {
             });
 
             const response = await fetch(
-                `http://localhost:4000/api/ipp/monthly-approvals/${approvalDialog.id}`,
+                `https://pms-database.vercel.app/api/ipp/monthly-approvals/${approvalDialog.id}`,
                 {
                     method: "PATCH",
                     headers: {

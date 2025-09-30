@@ -62,7 +62,7 @@ type Department = {
   name: string
 }
 
-export default function userPage() {
+export default function UserPage() {
   const [user, setUser] = useState<UserType | null>(null)
   const [departments, setDepartments] = useState<{ department_id: number, name: string }[]>([])
   const [password, setPassword] = useState("")
@@ -83,7 +83,7 @@ export default function userPage() {
     const fetchDepartments = async () => {
       try {
         const token = getToken();
-        const res = await fetch("http://localhost:4000/api/department/all", {
+        const res = await fetch("https://pms-database.vercel.app/api/department/all", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -135,7 +135,7 @@ export default function userPage() {
           return;
         }
 
-        const res = await fetch(`http://localhost:4000/api/user/${parsedUser.npk}/profile`, {
+        const res = await fetch(`https://pms-database.vercel.app/api/user/${parsedUser.npk}/profile`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -190,7 +190,7 @@ export default function userPage() {
         departmentId: user.departmentId,
       }
 
-      const res = await fetch(`http://localhost:4000/api/user/${user.npk}/update`, {
+      const res = await fetch(`https://pms-database.vercel.app/api/user/${user.npk}/update`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -253,7 +253,7 @@ export default function userPage() {
         return
       }
 
-      const res = await fetch(`http://localhost:4000/api/user/${user.npk}/update`, {
+      const res = await fetch(`https://pms-database.vercel.app/api/user/${user.npk}/update`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`,

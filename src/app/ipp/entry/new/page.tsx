@@ -198,7 +198,7 @@ export default function NewIppPage() {
                 return
             }
             try {
-                const res = await fetch(`http://localhost:4000/api/category/all`, {
+                const res = await fetch(`https://pms-database.vercel.app/api/category/all`, {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                 if (res.status === 404) {
@@ -298,7 +298,7 @@ export default function NewIppPage() {
             }
 
             const token = getToken()
-            const res = await fetch("http://localhost:4000/api/ipp/create", {
+            const res = await fetch("https://pms-database.vercel.app/api/ipp/create", {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",

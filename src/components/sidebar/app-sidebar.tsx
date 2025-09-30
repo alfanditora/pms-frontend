@@ -173,7 +173,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 
         const decoded = parseJwt(token)
         if (decoded?.npk) {
-            fetch(`http://localhost:4000/api/user/${decoded.npk}/profile`, {
+            fetch(`https://pms-database.vercel.app/api/user/${decoded.npk}/profile`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
                 .then((res) => res.json())

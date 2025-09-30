@@ -187,9 +187,9 @@ export default function EditIppWithActivitiesPage() {
             }
             try {
                 const [ippRes, actsRes, catsRes] = await Promise.all([
-                    fetch(`http://localhost:4000/api/ipp/${ippId}`, { headers: { Authorization: `Bearer ${token}` } }),
-                    fetch(`http://localhost:4000/api/ipp/${ippId}/activities`, { headers: { Authorization: `Bearer ${token}` } }),
-                    fetch(`http://localhost:4000/api/category/all`, { headers: { Authorization: `Bearer ${token}` } })
+                    fetch(`https://pms-database.vercel.app/api/ipp/${ippId}`, { headers: { Authorization: `Bearer ${token}` } }),
+                    fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/activities`, { headers: { Authorization: `Bearer ${token}` } }),
+                    fetch(`https://pms-database.vercel.app/api/category/all`, { headers: { Authorization: `Bearer ${token}` } })
                 ]);
 
                 if (!ippRes.ok || !actsRes.ok || !catsRes.ok) throw new Error("Failed to load initial data.");
@@ -277,7 +277,7 @@ export default function EditIppWithActivitiesPage() {
 
             await Promise.all([
                 // 1. Update IPP Header
-                fetch(`http://localhost:4000/api/ipp/${ippId}/update`, {
+                fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/update`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                     body: JSON.stringify({
@@ -290,7 +290,7 @@ export default function EditIppWithActivitiesPage() {
                 ...deletedActivityIds.map(id => {
                     const initialActivity = initialActivities.find(act => act.id === id);
                     if (initialActivity) {
-                        return fetch(`http://localhost:4000/api/ipp/${ippId}/activities/${initialActivity.activity}/delete`, {
+                        return fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/activities/${initialActivity.activity}/delete`, {
                             method: 'DELETE',
                             headers: { Authorization: `Bearer ${token}` }
                         });
@@ -305,14 +305,14 @@ export default function EditIppWithActivitiesPage() {
 
                     if (currentActivity.id) { // Update existing
                         if (JSON.stringify(currentActivity) !== JSON.stringify(initialActivity)) {
-                            return fetch(`http://localhost:4000/api/ipp/${ippId}/activities/${initialActivity?.activity}/update`, {
+                            return fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/activities/${initialActivity?.activity}/update`, {
                                 method: 'PUT',
                                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                                 body: JSON.stringify(payload)
                             });
                         }
                     } else { // Create new
-                        return fetch(`http://localhost:4000/api/ipp/${ippId}/activities/add`, {
+                        return fetch(`https://pms-database.vercel.app/api/ipp/${ippId}/activities/add`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                             body: JSON.stringify(payload)

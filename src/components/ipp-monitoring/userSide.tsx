@@ -124,7 +124,7 @@ export default function UserPage() {
       }
 
       // Fetch active IPPs for the user
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/ipp/user/${npk}/active`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/ipp/user/${npk}/active`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

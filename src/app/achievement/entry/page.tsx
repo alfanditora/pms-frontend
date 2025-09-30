@@ -152,10 +152,10 @@ export default function AchievementEntryPage() {
 
             // Fetch current user profile and approved IPPs
             const [userRes, ippsRes] = await Promise.all([
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/user/${decoded.npk}/profile`, {
+                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/user/${decoded.npk}/profile`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/ipp/user/${decoded.npk}/approved`, {
+                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/ipp/user/${decoded.npk}/approved`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
             ])
@@ -195,7 +195,7 @@ export default function AchievementEntryPage() {
                     // Fetch activities for this IPP
                     try {
                         const activitiesRes = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/ipp/${ipp.ipp}/activities`,
+                            `${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/ipp/${ipp.ipp}/activities`,
                             { headers: { Authorization: `Bearer ${token}` } }
                         )
                         if (activitiesRes.ok) {
@@ -214,7 +214,7 @@ export default function AchievementEntryPage() {
                     if (!enrichedIpp.category && enrichedIpp.categoryId) {
                         try {
                             const categoryRes = await fetch(
-                                `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/category/find/${enrichedIpp.categoryId}`,
+                                `${process.env.NEXT_PUBLIC_API_URL || 'https://pms-database.vercel.app'}/api/category/find/${enrichedIpp.categoryId}`,
                                 { headers: { Authorization: `Bearer ${token}` } }
                             )
                             if (categoryRes.ok) {
